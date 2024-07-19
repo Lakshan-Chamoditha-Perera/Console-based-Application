@@ -1,19 +1,21 @@
 package entity;
 
+import java.time.LocalDate;
+import java.time.LocalTime;
 import java.util.ArrayList;
-import java.util.Date;
 import java.util.List;
+import java.util.Optional;
 
 public class Technician {
     private String name;
-    private Date date;
+    private LocalDate date;
     private List<Job> jobList = new ArrayList<>();
     private List<Appointment> appointmentList = new ArrayList<>();
 
     public Technician() {
     }
 
-    public Technician(String name, Date date, List<Job> jobList) {
+    public Technician(String name, LocalDate date, List<Job> jobList) {
         this.name = name;
         this.date = date;
         this.jobList = jobList;
@@ -27,11 +29,11 @@ public class Technician {
         this.name = name;
     }
 
-    public Date getDate() {
+    public LocalDate getDate() {
         return date;
     }
 
-    public void setDate(Date date) {
+    public void setDate(LocalDate date) {
         this.date = date;
     }
 
@@ -50,6 +52,56 @@ public class Technician {
     public void setAppointmentList(List<Appointment> appointmentList) {
         this.appointmentList = appointmentList;
     }
+
+    public boolean isAvailable(Appointment appointment) {
+        // Check if the technician has the required job type
+        boolean hasJobType = jobList.stream()
+                .anyMatch(j -> j.getJobType().equals(appointment.getJobType()));
+
+        if (!hasJobType) {
+            System.out.println("Technician is not available for the job type");
+            return false;
+        }
+
+        // Check if the technician is available at the requested time
+        boolean isAvailable = checkJobTimeAndDateAvailability(appointment);
+        if (isAvailable) {
+            System.out.println("Technician is available for the appointment");
+        } else {
+            System.out.println("Technician is not available for the appointment");
+        }
+        return isAvailable;
+    }
+
+    private boolean checkJobTimeAndDateAvailability(Appointment appointment) {
+        return appointmentList.stream()
+                .filter(app -> app.getDate().equals(appointment.getDate()))
+                .allMatch(app -> checkTime(appointment.getJobType(), appointment.getStart(), app));
+    }
+    public boolean checkTime(JobType jobType, LocalTime start, Appointment currentAppointment) {
+        LocalTime currentEnd = currentAppointment.getEnd();
+
+        // Determine the duration based on job type
+        int duration = switch (jobType) {
+            case AC_REPAIRING -> 60; // minutes
+            case PLUMBING -> 100;    // minutes
+            default -> throw new IllegalArgumentException("Invalid job type");
+        };
+
+        LocalTime proposedEnd = start.plusMinutes(duration);
+
+        // Check for overlap: return false if there is any overlap
+        return !(start.isBefore(currentEnd) && proposedEnd.isAfter(currentAppointment.getStart()));
+    }
+
+
+    @Override
+    public String toString() {
+        return "Technician{" +
+                "name='" + name + '\'' +
+                ", date=" + date +
+                ", jobList=" + jobList +
+                ", appointmentList=" + appointmentList +
+                '}';
+    }
 }
-
-

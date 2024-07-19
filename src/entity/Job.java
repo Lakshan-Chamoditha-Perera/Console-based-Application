@@ -4,14 +4,9 @@ import java.sql.Time;
 
 public class Job {
    private JobType jobType;
-   private Time estimatedTime;
+   private long estimatedTime;
 
     public Job() {
-    }
-
-    public Job(JobType jobType, Time estimatedTime) {
-        this.jobType = jobType;
-        this.estimatedTime = estimatedTime;
     }
 
     public JobType getJobType() {
@@ -20,5 +15,26 @@ public class Job {
 
     public void setJobType(JobType jobType) {
         this.jobType = jobType;
+    }
+
+    public long getEstimatedTime() {
+        return estimatedTime;
+    }
+
+    public void setEstimatedTime(long estimatedTime) {
+        this.estimatedTime = estimatedTime;
+    }
+
+    public Job(JobType jobType, long estimatedTime) {
+        this.jobType = jobType;
+        this.estimatedTime = estimatedTime;
+    }
+
+    @Override
+    public String toString() {
+        return "Job{" +
+                "jobType=" + jobType +
+                ", estimatedTime=" + estimatedTime +
+                '}';
     }
 }

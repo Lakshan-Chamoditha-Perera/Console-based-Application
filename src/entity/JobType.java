@@ -1,5 +1,8 @@
 package entity;
 
+/**
+ * Enum for job type
+ */
 public enum JobType {
-    AC_REPARING, PLUMBING
+    AC_REPAIRING, PLUMBING
 }
