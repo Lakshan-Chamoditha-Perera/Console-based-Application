@@ -7,13 +7,13 @@ public class Appointment {
     private LocalDate date;
     private LocalTime start;
     private LocalTime end;
-    private JobType jobType;
+    private Job job;
 
-    public Appointment(LocalDate date, LocalTime start, LocalTime end, JobType jobType) {
+    public Appointment(LocalDate date, LocalTime start, LocalTime end, Job job) {
         this.date = date;
         this.start = start;
         this.end = end;
-        this.jobType = jobType;
+        this.job = job;
     }
 
     public Appointment() {
@@ -43,16 +43,16 @@ public class Appointment {
         this.end = end;
     }
 
-    public JobType getJobType() {
-        return jobType;
+    public Job getJob() {
+        return job;
     }
 
-    public void setJobType(JobType jobType) {
-        this.jobType = jobType;
+    public void setJob(Job job) {
+        this.job = job;
     }
 
     @Override
     public String toString() {
-        return "Appointment{" + "date=" + date + ", start=" + start + ", end=" + end + ", jobType=" + jobType + '}';
+        return "Appointment{" + "date=" + date + ", start=" + start + ", end=" + end + ", job=" + job + '}';
     }
 }

@@ -61,7 +61,7 @@ public class Technician {
     public boolean isAvailable(Appointment appointment) {
         // Check if the technician has the required job type
         boolean hasJobType = jobList.stream()
-                .anyMatch(j -> j.getJobType().equals(appointment.getJobType()));
+                .anyMatch(j -> j.getJobType().equals(appointment.getJob().getJobType()));
 
         if (!hasJobType) {
             System.out.println("Technician is not available for the job type");
@@ -86,28 +86,19 @@ public class Technician {
     private boolean checkJobTimeAndDateAvailability(Appointment appointment) {
         return appointmentList.stream()
                 .filter(app -> app.getDate().equals(appointment.getDate()))
-                .allMatch(app -> checkTime(appointment.getJobType(), appointment.getStart(), app));
+                .allMatch(app -> checkTime(appointment.getJob(), appointment.getStart(), app));
     }
 
     /**
      * Check if the technician is available at the requested time
-     * @param jobType
+     * @param job
      * @param start
      * @param currentAppointment
      * @return boolean
      */
-    public boolean checkTime(JobType jobType, LocalTime start, Appointment currentAppointment) {
+    public boolean checkTime(Job job, LocalTime start, Appointment currentAppointment) {
         LocalTime currentEnd = currentAppointment.getEnd();
-
-        // Determine the duration based on job type
-        int duration = switch (jobType) {
-            case AC_REPAIRING -> 60; // minutes
-            case PLUMBING -> 100;    // minutes
-            default -> throw new IllegalArgumentException("Invalid job type");
-        };
-
-        LocalTime proposedEnd = start.plusMinutes(duration);
-
+        LocalTime proposedEnd = start.plusMinutes(job.getEstimatedTime());
         // Check for overlap: return false if there is any overlap
         return !(start.isBefore(currentEnd) && proposedEnd.isAfter(currentAppointment.getStart()));
     }
