@@ -3,6 +3,9 @@ package entity;
 import java.time.LocalDate;
 import java.time.LocalTime;
 
+/**
+ * Entity class for appointment
+ */
 public class Appointment {
     private LocalDate date;
     private LocalTime start;

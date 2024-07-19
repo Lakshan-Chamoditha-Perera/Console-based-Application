@@ -7,26 +7,11 @@ import java.sql.Time;
 import java.time.LocalDate;
 import java.time.LocalTime;
 import java.time.format.DateTimeFormatter;
-import java.util.ArrayList;
-import java.util.List;
 import java.util.Scanner;
 
+
 public class Main {
-    private static final int PLUMBING_JOB_TYPE = 1;
-    private static final int AC_REPAIRING_JOB_TYPE = 2;
-    private static final int PLUMBING_DURATION = 60;
-    private static final int AC_REPAIRING_DURATION = 100;
-    public static List<Technician> technicianList = new ArrayList<>(); // List of technicians
     public static Scanner scanner = new Scanner(System.in); // Scanner object to read input
-
-    /**
-     * Initialize the technician list with a technician
-     */
-    static {
-        Technician technician = new Technician("Dave", LocalDate.now(), List.of(new Job(JobType.PLUMBING, 60), new Job(JobType.AC_REPAIRING, 100)));
-
-        technicianList.add(technician);
-    }
 
     public static void main(String[] args) {
         Scanner scanner = new Scanner(System.in);
@@ -44,7 +29,7 @@ public class Main {
                     appointment.setEnd(calculateEstimatedTime(appointment).toLocalTime());
                     technician.getAppointmentList().add(appointment);
 
-//                technician.getAppointmentList().forEach(System.out::println);
+                    technician.getAppointmentList().forEach(System.out::println);
 
                     System.out.println("Appointment booked successfully.");
                 } else {
@@ -95,14 +80,11 @@ public class Main {
      * @return a Job instance or null if the job type is invalid
      */
     private static Job createJobFromType(int jobType) {
-        switch (jobType) {
-            case PLUMBING_JOB_TYPE:
-                return new Job(JobType.PLUMBING, PLUMBING_DURATION);
-            case AC_REPAIRING_JOB_TYPE:
-                return new Job(JobType.AC_REPAIRING, AC_REPAIRING_DURATION);
-            default:
-                return null;
-        }
+        return switch (jobType) {
+            case 1 -> new Job(JobType.PLUMBING, 60);
+            case 2 -> new Job(JobType.AC_REPAIRING, 100);
+            default -> null;
+        };
     }
 
 
@@ -155,8 +137,8 @@ public class Main {
      * @return Technician
      */
     public static Technician checkAvailability(Appointment appointment) {
-        if (technicianList.isEmpty()) throw new RuntimeException("No technician available");
-        return technicianList.stream().filter(technician -> technician.isAvailable(appointment)).findFirst().orElse(null);
+        if (Technician.getTechnicianList().isEmpty()) throw new RuntimeException("No technician available");
+        return Technician.getTechnicianList().stream().filter(technician -> technician.isAvailable(appointment)).findFirst().orElse(null);
     }
 
 

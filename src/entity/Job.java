@@ -1,5 +1,8 @@
 package entity;
 
+/**
+ * Entity class for job
+ */
 public class Job {
     private JobType jobType;
     private long estimatedTime;

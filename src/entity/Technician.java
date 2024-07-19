@@ -4,9 +4,14 @@ import java.time.LocalDate;
 import java.time.LocalTime;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Optional;
 
+/**
+ * Entity class for technician
+ */
 public class Technician {
+
+    private static List<Technician> technicianList;
+
     private String name;
     private LocalDate date;
     private List<Job> jobList = new ArrayList<>();
@@ -19,6 +24,25 @@ public class Technician {
         this.name = name;
         this.date = date;
         this.jobList = jobList;
+    }
+
+    /**
+     * Get the list of technicians
+     *
+     * @return List of technicians
+     */
+    public static List<Technician> getTechnicianList() {
+        return technicianList == null ?
+                technicianList = List.of(
+                        new Technician(
+                                "Dave",
+                                LocalDate.now(),
+                                List.of(
+                                        new Job(JobType.PLUMBING, 60),
+                                        new Job(JobType.AC_REPAIRING, 100))
+                        )
+                ) : technicianList;
+
     }
 
     public String getName() {
@@ -55,13 +79,13 @@ public class Technician {
 
     /**
      * Check if the technician is available for the appointment
+     *
      * @param appointment
      * @return technician
      */
     public boolean isAvailable(Appointment appointment) {
         // Check if the technician has the required job type
-        boolean hasJobType = jobList.stream()
-                .anyMatch(j -> j.getJobType().equals(appointment.getJob().getJobType()));
+        boolean hasJobType = jobList.stream().anyMatch(j -> j.getJobType().equals(appointment.getJob().getJobType()));
 
         if (!hasJobType) {
             System.out.println("Technician is not available for the job type");
@@ -70,27 +94,27 @@ public class Technician {
 
         // Check if the technician is available at the requested time
         boolean isAvailable = checkJobTimeAndDateAvailability(appointment);
-        if (isAvailable) {
-            System.out.println("Technician is available for the appointment");
-        } else {
-            System.out.println("Technician is not available for the appointment");
+        if (!isAvailable) {
+            System.out.println("Technician is not available at the requested time");
         }
         return isAvailable;
     }
 
     /**
      * Check if the technician is available for the appointment
+     *
      * @param appointment
      * @return technician
      */
     private boolean checkJobTimeAndDateAvailability(Appointment appointment) {
-        return appointmentList.stream()
-                .filter(app -> app.getDate().equals(appointment.getDate()))
-                .allMatch(app -> checkTime(appointment.getJob(), appointment.getStart(), app));
+        return appointmentList.stream().filter( // Check if the technician has any appointment on the requested date
+                app -> app.getDate().equals(appointment.getDate())).allMatch( // Check if the technician is available at the requested time
+                        app -> checkTime(appointment.getJob(), appointment.getStart(), app));
     }
 
     /**
      * Check if the technician is available at the requested time
+     *
      * @param job
      * @param start
      * @param currentAppointment
@@ -106,11 +130,6 @@ public class Technician {
 
     @Override
     public String toString() {
-        return "Technician{" +
-                "name='" + name + '\'' +
-                ", date=" + date +
-                ", jobList=" + jobList +
-                ", appointmentList=" + appointmentList +
-                '}';
+        return "Technician{" + "name='" + name + '\'' + ", date=" + date + ", jobList=" + jobList + ", appointmentList=" + appointmentList + '}';
     }
 }
