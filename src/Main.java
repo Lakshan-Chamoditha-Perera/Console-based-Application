@@ -12,10 +12,8 @@ import java.util.List;
 import java.util.Scanner;
 
 public class Main {
-    /**
-     * List of technicians
-     */
-    public static List<Technician> technicianList = new ArrayList<>();
+    public static List<Technician> technicianList = new ArrayList<>(); // List of technicians
+    public static Scanner scanner = new Scanner(System.in); // Scanner object to read input
 
     /**
      * Initialize the technician list with a technician
@@ -31,41 +29,38 @@ public class Main {
 
             System.out.println("Book an appointment");
 
-            Appointment appointment = new Appointment(
-                    promptDate(scanner),
-                    promptTime(scanner),
-                    null,
-                    promptJobType(scanner)
-            );
+            Appointment appointment = new Appointment(promptDate(), promptTime(), null, promptJobType());
 
-            Technician technician = checkAvailability(appointment);
+            try {
 
-            if (technician != null) {
-                System.out.println("Technician " + technician.getName() + " is available for the appointment.");
-                appointment.setEnd(calculateEstimatedTime(appointment).toLocalTime());
-                technician.getAppointmentList().add(appointment);
-                technician.getAppointmentList().forEach(System.out::println);
+                Technician technician = checkAvailability(appointment);
+                if (technician != null) {
+                    System.out.println("Technician " + technician.getName() + " is available for the appointment.");
+                    appointment.setEnd(calculateEstimatedTime(appointment).toLocalTime());
+                    technician.getAppointmentList().add(appointment);
 
-                System.out.println("Appointment booked successfully.");
-            } else {
-                System.out.println("No technician available for the appointment.");
+//                technician.getAppointmentList().forEach(System.out::println);
+
+                    System.out.println("Appointment booked successfully.");
+                } else {
+                    System.out.println("No technician available for the appointment.");
+                }
+            } catch (Exception e) {
+                System.out.println(e.getMessage());
             }
-            // Ask user if they want to book another appointment
+
             System.out.println("Do you want to book another appointment? (Y/N)");
             String response = scanner.nextLine();
-            if (!response.equalsIgnoreCase("Y")) {
-                break;
-            }
+            if (!response.equalsIgnoreCase("Y")) break;
         }
     }
 
     /**
      * Prompt the user to enter the job type
      *
-     * @param scanner
-     * @return
+     * @return JobType
      */
-    private static JobType promptJobType(Scanner scanner) {
+    private static JobType promptJobType() {
         JobType appointmentJob = null;
         while (appointmentJob == null) {
             System.out.println("Input job type (1: Plumbing / 2: A/C repairing): ");
@@ -90,10 +85,9 @@ public class Main {
     /**
      * Prompt the user to enter the date in dd/MM/yyyy format
      *
-     * @param scanner
-     * @return
+     * @return LocalDate
      */
-    private static LocalDate promptDate(Scanner scanner) {
+    private static LocalDate promptDate() {
         LocalDate parsedDate = null;
         DateTimeFormatter dateFormatter = DateTimeFormatter.ofPattern("dd/MM/yyyy");
         while (parsedDate == null) {
@@ -112,10 +106,9 @@ public class Main {
     /**
      * Prompt the user to enter the time in hh:mm aa format
      *
-     * @param scanner
-     * @return
+     * @return LocalTime
      */
-    private static LocalTime promptTime(Scanner scanner) {
+    private static LocalTime promptTime() {
         LocalTime bookingTime = null;
         DateTimeFormatter timeFormatter = DateTimeFormatter.ofPattern("hh:mm a");
         while (bookingTime == null) {
@@ -130,11 +123,25 @@ public class Main {
         return bookingTime;
     }
 
+
+    /**
+     * Check if a technician is available for the appointment
+     *
+     * @param appointment
+     * @return Technician
+     */
     public static Technician checkAvailability(Appointment appointment) {
         if (technicianList.isEmpty()) throw new RuntimeException("No technician available");
         return technicianList.stream().filter(technician -> technician.isAvailable(appointment)).findFirst().orElse(null);
     }
 
+
+    /**
+     * Calculate the estimated time for the appointment
+     *
+     * @param appointment
+     * @return Time
+     */
     public static Time calculateEstimatedTime(Appointment appointment) {
         switch (appointment.getJobType()) {
             case PLUMBING:

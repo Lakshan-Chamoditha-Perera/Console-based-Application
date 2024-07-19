@@ -53,6 +53,11 @@ public class Technician {
         this.appointmentList = appointmentList;
     }
 
+    /**
+     * Check if the technician is available for the appointment
+     * @param appointment
+     * @return technician
+     */
     public boolean isAvailable(Appointment appointment) {
         // Check if the technician has the required job type
         boolean hasJobType = jobList.stream()
@@ -73,11 +78,24 @@ public class Technician {
         return isAvailable;
     }
 
+    /**
+     * Check if the technician is available for the appointment
+     * @param appointment
+     * @return technician
+     */
     private boolean checkJobTimeAndDateAvailability(Appointment appointment) {
         return appointmentList.stream()
                 .filter(app -> app.getDate().equals(appointment.getDate()))
                 .allMatch(app -> checkTime(appointment.getJobType(), appointment.getStart(), app));
     }
+
+    /**
+     * Check if the technician is available at the requested time
+     * @param jobType
+     * @param start
+     * @param currentAppointment
+     * @return boolean
+     */
     public boolean checkTime(JobType jobType, LocalTime start, Appointment currentAppointment) {
         LocalTime currentEnd = currentAppointment.getEnd();
 
